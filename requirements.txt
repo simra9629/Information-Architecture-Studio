@@ -11,9 +11,5 @@ matplotlib>=3.7.0
 scipy>=1.10.0
 pillow>=10.0.0
 numpy>=1.24.0
+gunicorn 
 
-# Optional: enables AI image captioning/OCR during DOCX/PDF/HTML image
-# extraction (app/parser/image_pipeline.py). Not required — without it,
-# or without an ANTHROPIC_API_KEY env var set, images still extract and
-# render fine, just without a generated caption.
-# anthropic>=0.40.0
