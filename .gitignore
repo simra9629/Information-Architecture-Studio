@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime-generated, not source
+exports/*
+!exports/.gitkeep
+themes/*.json
+
+# Local env / editor
+.venv/
+venv/
+.DS_Store
+*.log
+
+# Anthropic API key, if a developer sets one in a local .env
+.env

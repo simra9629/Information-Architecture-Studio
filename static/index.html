@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IAS — Information Architecture Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0C0C0E;
+  --s1:#111114;
+  --s2:#17171B;
+  --s3:#1E1E24;
+  --b1:rgba(255,255,255,.06);
+  --b2:rgba(255,255,255,.10);
+  --b3:rgba(255,255,255,.16);
+  --t1:#F0EEF8;
+  --t2:#A8A4BC;
+  --t3:#635F78;
+  --t4:#38364A;
+  --acc:#A78BFA;
+  --acc2:#7C3AED;
+  --acc-dim:rgba(167,139,250,.10);
+  --acc-brd:rgba(167,139,250,.25);
+  --grn:#34D399;
+  --grn-dim:rgba(52,211,153,.10);
+  --grn-brd:rgba(52,211,153,.22);
+  --ora:#FB923C;
+  --ora-dim:rgba(251,146,60,.10);
+  --red:#F87171;
+  --red-dim:rgba(248,113,113,.10);
+  --r:8px;--rl:14px;
+  --shadow:0 2px 8px rgba(0,0,0,.4);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.5);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);font-size:13px;line-height:1.5}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+#hdr{
+  height:54px;padding:0 18px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--s1);
+  border-bottom:1px solid var(--b1);
+  flex-shrink:0;z-index:40;
+  position:relative;
+}
+#hdr::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--acc-brd) 30%,var(--acc-brd) 70%,transparent);
+  opacity:.7;
+}
+.logo{
+  font-family:'Fraunces',serif;font-size:16px;font-weight:700;
+  letter-spacing:-.4px;white-space:nowrap;line-height:1;
+  display:flex;align-items:baseline;gap:5px;
+}
+.logo-ias{
+  background:linear-gradient(135deg,#A78BFA,#60A5FA);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-rest{color:var(--t2);font-size:13px;font-weight:400;font-family:'Inter',sans-serif;letter-spacing:0}
+.hgap{flex:1}
+.htabs{display:flex;background:var(--s3);border-radius:var(--r);padding:2px;gap:2px;border:1px solid var(--b1)}
+.htab{
+  font-size:11px;font-weight:500;padding:5px 14px;
+  border:none;background:transparent;color:var(--t3);
+  border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Inter',sans-serif;
+}
+.htab:hover{color:var(--t2)}
+.htab.active{background:var(--s1);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.hbtn{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
+  padding:5px 11px;border-radius:var(--r);border:1px solid var(--b2);
+  background:var(--s3);color:var(--t2);cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:all .14s;white-space:nowrap;
+}
+.hbtn:hover{border-color:var(--b3);color:var(--t1)}
+.hbtn i{font-size:13px}
+.hbtn-primary{background:var(--acc-dim);border-color:var(--acc-brd);color:var(--acc)}
+.hbtn-primary:hover{background:rgba(167,139,250,.18);color:var(--acc)}
+.hbtn-designer{background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(96,165,250,.12));border-color:rgba(167,139,250,.3);color:var(--acc)}
+.hbtn-designer:hover{background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(96,165,250,.2))}
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+#body{display:flex;flex:1;overflow:hidden}
+#sidebar{
+  width:224px;flex-shrink:0;
+  background:var(--s1);border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+#editor{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sb-section{padding:14px 12px;border-bottom:1px solid var(--b1)}
+.sb-label{
+  font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t4);margin-bottom:8px;display:block;
+}
+
+/* Theme grid */
+.theme-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
+.theme-btn{
+  font-size:10px;font-weight:500;padding:6px 4px;
+  border:1px solid var(--b1);border-radius:6px;
+  background:var(--s2);color:var(--t3);cursor:pointer;
+  text-align:center;transition:all .13s;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;font-family:'Inter',sans-serif;
+}
+.theme-btn:hover{border-color:var(--b2);color:var(--t2)}
+.theme-btn.active{background:var(--acc-dim);border-color:var(--acc-brd);color:var(--acc)}
+
+/* Mode list */
+.mode-list{display:flex;flex-direction:column;gap:2px}
+.mode-btn{
+  font-size:12px;font-weight:400;padding:7px 9px;
+  border:1px solid transparent;border-radius:var(--r);
+  background:transparent;color:var(--t3);cursor:pointer;
+  text-align:left;display:flex;align-items:center;gap:8px;
+  transition:all .13s;font-family:'Inter',sans-serif;
+}
+.mode-btn:hover{background:var(--s2);color:var(--t2)}
+.mode-btn.active{background:var(--s2);color:var(--t1);border-color:var(--b1)}
+.mode-btn i{font-size:15px;color:var(--t4)}
+.mode-btn.active i{color:var(--acc)}
+
+/* Suggestions */
+.sug-list{display:flex;flex-direction:column;gap:3px}
+.sug-item{
+  font-size:11px;padding:5px 8px;border-radius:var(--r);
+  background:var(--s2);color:var(--t2);
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  border:1px solid var(--b1);
+}
+.sug-apply{
+  font-size:9px;padding:2px 7px;border:1px solid var(--acc-brd);
+  border-radius:4px;background:var(--acc-dim);cursor:pointer;color:var(--acc);
+  font-family:'Inter',sans-serif;font-weight:500;transition:all .12s;
+}
+.sug-apply:hover{background:rgba(167,139,250,.2)}
+
+/* Custom CSS box */
+.custom-css-ta{
+  font-family:'DM Mono',monospace;font-size:11px;
+  width:100%;height:110px;resize:vertical;
+  border:1px solid var(--b1);border-radius:var(--r);
+  padding:8px 10px;background:var(--s2);color:var(--t1);
+  line-height:1.55;outline:none;transition:border-color .15s;
+}
+.custom-css-ta::placeholder{color:var(--t4)}
+.custom-css-ta:focus{border-color:var(--acc-brd)}
+.css-hint{font-size:10px;color:var(--t4);margin-top:6px;line-height:1.4}
+.import-swatch{width:22px;height:22px;border-radius:5px;border:1px solid rgba(255,255,255,.15);flex-shrink:0}
+
+.css-clear-btn{
+  font-size:10px;color:var(--t4);background:none;border:none;cursor:pointer;
+  padding:2px 4px;font-family:'Inter',sans-serif;transition:color .12s;
+}
+.css-clear-btn:hover{color:var(--t1)}
+
+.css-var-ref{margin-top:8px;border-top:1px solid var(--b1);padding-top:8px}
+.css-var-ref-toggle{
+  width:100%;display:flex;align-items:center;gap:5px;background:none;border:none;
+  cursor:pointer;color:var(--t3);font-size:10px;font-family:'Inter',sans-serif;
+  font-weight:600;letter-spacing:.02em;text-transform:uppercase;padding:2px 0;
+}
+.css-var-ref-toggle:hover{color:var(--t1)}
+.css-var-ref-toggle i{font-size:12px;transition:transform .15s}
+.css-var-ref-toggle.open i{transform:rotate(90deg)}
+.css-var-ref-source{
+  text-transform:none;font-weight:400;color:var(--t4);letter-spacing:0;margin-left:auto;
+}
+.css-var-ref-body{padding-top:4px}
+.css-var-ref-chips{display:flex;flex-wrap:wrap;gap:5px}
+.css-var-chip{
+  display:flex;align-items:center;gap:5px;font-size:10px;font-family:'DM Mono',monospace;
+  padding:4px 7px 4px 5px;border-radius:5px;border:1px solid var(--b1);background:var(--s2);
+  cursor:pointer;color:var(--t2);transition:all .12s;
+}
+.css-var-chip:hover{border-color:var(--acc-brd);color:var(--t1);background:var(--s3)}
+.css-var-chip .swatch{width:11px;height:11px;border-radius:3px;border:1px solid rgba(255,255,255,.2);flex-shrink:0}
+.css-var-chip .fname{max-width:74px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.auto-design-btn{
+  width:100%;display:flex;align-items:flex-start;gap:10px;text-align:left;
+  padding:12px 13px;border-radius:var(--r);cursor:pointer;
+  background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(96,165,250,.08));
+  border:1px solid rgba(167,139,250,.28);color:var(--t1);transition:all .15s;
+}
+.auto-design-btn:hover{border-color:rgba(167,139,250,.5)}
+.auto-design-btn.active{background:linear-gradient(135deg,rgba(167,139,250,.22),rgba(96,165,250,.15));border-color:var(--acc-brd)}
+.auto-design-btn i{font-size:16px;color:var(--acc);margin-top:1px;flex-shrink:0}
+.auto-design-title{font-size:12.5px;font-weight:600;color:var(--t1)}
+.auto-design-sub{font-size:10.5px;color:var(--t3);margin-top:2px;line-height:1.4}
+
+/* ── INPUT AREA ──────────────────────────────────────────── */
+#input-panel{
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--b1);
+  background:var(--s1);flex-shrink:0;
+}
+#content-input{
+  font-family:'DM Mono',monospace;font-size:12px;
+  width:100%;height:154px;resize:none;
+  border:1px solid var(--b1);border-radius:var(--r);
+  padding:10px 12px;background:var(--s2);color:var(--t1);
+  line-height:1.65;outline:none;transition:border-color .15s;
+}
+#content-input::placeholder{color:var(--t4)}
+#content-input:focus{border-color:var(--acc-brd)}
+#drop-zone{
+  border:1px dashed var(--b2);border-radius:var(--r);
+  padding:10px;text-align:center;cursor:pointer;
+  transition:all .14s;margin-top:8px;
+  font-size:10px;color:var(--t4);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+#drop-zone:hover,#drop-zone.drag-over{border-color:var(--acc-brd);background:var(--acc-dim);color:var(--acc)}
+#drop-zone i{font-size:14px}
+.input-bar{display:flex;align-items:center;gap:6px;margin-top:10px}
+.detect-pill{
+  font-size:10px;padding:3px 9px;border-radius:99px;
+  border:1px solid var(--b1);background:var(--s3);color:var(--t3);
+  white-space:nowrap;transition:all .2s;
+}
+.detect-pill.detected{background:var(--grn-dim);border-color:var(--grn-brd);color:var(--grn)}
+.mode-chip{
+  font-size:10px;padding:3px 8px;border-radius:99px;
+  border:1px solid var(--b1);background:var(--s3);color:var(--t4);
+  display:none;white-space:nowrap;
+}
+.spacer{flex:1}
+.btn-transform{
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  padding:8px 20px;border-radius:var(--r);border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:all .15s;
+  background:linear-gradient(135deg,#7C3AED,#5B21B6);
+  color:white;box-shadow:0 2px 12px rgba(124,58,237,.4);
+}
+.btn-transform:hover{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 4px 20px rgba(124,58,237,.55);transform:translateY(-1px)}
+.btn-transform:disabled{background:var(--s3);color:var(--t4);box-shadow:none;transform:none;cursor:not-allowed}
+.btn-sample{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
+  padding:6px 11px;border-radius:var(--r);
+  border:1px solid var(--b2);background:var(--s2);
+  color:var(--t2);cursor:pointer;transition:all .14s;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.btn-sample:hover{border-color:var(--b3);color:var(--t1)}
+
+/* ── OUTPUT ──────────────────────────────────────────────── */
+#output-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.output-bar{
+  display:flex;align-items:center;gap:6px;padding:8px 14px;
+  background:var(--s1);border-bottom:1px solid var(--b1);
+  flex-shrink:0;
+}
+.chip{
+  font-size:10px;padding:3px 9px;border-radius:99px;
+  border:1px solid var(--b1);color:var(--t3);background:var(--s3);white-space:nowrap;
+}
+.chip-acc{background:var(--acc-dim);border-color:var(--acc-brd);color:var(--acc)}
+.chip-grn{background:var(--grn-dim);border-color:var(--grn-brd);color:var(--grn)}
+.output-content{flex:1;overflow-y:auto;background:#18181f;position:relative}
+.ias-doc{min-height:100vh;box-sizing:border-box}
+
+/* EMPTY + LOADING */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:12px;color:var(--t4);padding:40px;
+}
+.empty-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--acc-dim),rgba(96,165,250,.08));
+  border:1px solid var(--acc-brd);display:flex;align-items:center;justify-content:center;
+  font-size:26px;
+}
+.empty-state h3{font-size:15px;font-weight:600;color:var(--t2);font-family:'Fraunces',serif}
+.empty-state p{font-size:12px;color:var(--t3);text-align:center;line-height:1.6;max-width:260px}
+.empty-state .quick-tips{
+  display:flex;flex-direction:column;gap:5px;width:100%;max-width:320px;margin-top:4px;
+}
+.tip-row{
+  display:flex;align-items:flex-start;gap:8px;padding:7px 10px;
+  background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);
+  font-size:11px;color:var(--t3);
+}
+.tip-icon{color:var(--acc);flex-shrink:0;margin-top:1px}
+.loading-state{
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:14px;color:var(--t3);
+}
+.spinner{
+  width:32px;height:32px;border:2px solid var(--b2);
+  border-top-color:var(--acc);border-radius:50%;
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:12px;color:var(--t2)}
+
+/* STRUCTURE VIEW */
+#structure-view{
+  flex:1;overflow-y:auto;padding:14px;background:var(--bg);display:none;
+}
+.block-row{
+  display:flex;align-items:center;gap:8px;padding:8px 11px;margin-bottom:4px;
+  background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);
+  transition:border-color .13s;
+}
+.block-row:hover{border-color:var(--b2)}
+.block-type{
+  font-family:'DM Mono',monospace;font-size:9.5px;font-weight:500;
+  padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;
+}
+.block-content{font-size:11px;color:var(--t3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.block-score{font-family:'DM Mono',monospace;font-size:10px;color:var(--t4);flex-shrink:0}
+.block-score.hi{color:var(--acc);font-weight:600}
+
+/* TOAST */
+/* Fullscreen mode */
+#body.fullscreen #sidebar{width:0;overflow:hidden;border-right:none}
+#body.fullscreen #sidebar *{display:none}
+.fs-overlay{display:none;position:fixed;inset:0;z-index:90;background:var(--bg);flex-direction:column}
+.fs-overlay.active{display:flex}
+.fs-bar{height:44px;background:var(--s1);border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;padding:0 14px;gap:8px;flex-shrink:0}
+.fs-bar .spacer{flex:1}
+#fs-iframe-wrap{flex:1;overflow-y:auto;background:#18181f}
+#fs-iframe-wrap .ias-doc{min-height:100vh;box-sizing:border-box}
+/* PPTX dialog */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--s2);border:1px solid var(--b2);border-radius:14px;padding:22px;width:340px;box-shadow:0 8px 40px rgba(0,0,0,.7)}
+.modal h3{font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:14px;color:var(--t1)}
+.modal-field{margin-bottom:10px}
+.modal-field label{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:4px}
+.radio-group{display:flex;gap:8px}
+.radio-opt{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--b2);border-radius:var(--radius);cursor:pointer;transition:all .13s;flex:1;justify-content:center}
+.radio-opt:hover{border-color:var(--b3)}
+.radio-opt.selected{background:var(--acc-dim);border-color:var(--acc-brd);color:var(--acc)}
+.radio-opt input{display:none}
+.modal-row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+#toast{
+  position:fixed;bottom:18px;right:18px;
+  background:var(--s3);border:1px solid var(--b3);color:var(--t1);
+  font-size:11px;padding:9px 14px;border-radius:var(--r);
+  z-index:200;opacity:0;transform:translateY(5px);transition:all .18s;pointer-events:none;
+  box-shadow:var(--shadow);
+}
+#toast.show{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<div id="app" style="display:flex;flex-direction:column;height:100vh">
+
+<!-- HEADER -->
+<div id="hdr">
+  <div class="logo">
+    <span class="logo-ias">IAS</span>
+    <span class="logo-rest">Information Architecture Studio</span>
+  </div>
+  <div class="hgap"></div>
+  <div class="htabs">
+    <button class="htab active" onclick="setTab('editor',this)">Editor</button>
+    <button class="htab" onclick="setTab('structure',this)">Structure</button>
+  </div>
+  <div class="hgap"></div>
+  <button class="hbtn" onclick="exportHTML()"><i class="ti ti-code"></i>HTML</button>
+  <button class="hbtn" onclick="exportDOCX()"><i class="ti ti-file-word"></i>DOCX</button>
+  <button class="hbtn" onclick="exportPDF()"><i class="ti ti-file-type-pdf"></i>PDF</button>
+  <button class="hbtn" id="pptx-btn" onclick="openPptxDialog()"><i class="ti ti-presentation"></i>PPT</button>
+  <button class="hbtn hbtn-designer" onclick="openDesigner()"><i class="ti ti-wand"></i>Designer</button>
+  <button class="hbtn" id="fs-btn" onclick="toggleFullscreen()" title="Fullscreen preview"><i class="ti ti-arrows-maximize" id="fs-icon"></i></button>
+</div>
+
+<div id="body">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+
+    <div class="sb-section">
+      <span class="sb-label">Design</span>
+      <button class="auto-design-btn active" id="auto-design-btn" onclick="setAutoDesign()">
+        <i class="ti ti-sparkles"></i>
+        <div>
+          <div class="auto-design-title">Auto-Design</div>
+          <div class="auto-design-sub">Analyzes this document and generates its own palette, type, and layout</div>
+        </div>
+      </button>
+      <div id="auto-design-profile" class="css-hint" style="display:none;margin-top:8px"></div>
+    </div>
+
+    <div class="sb-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span class="sb-label" style="margin:0">Manual Themes</span>
+        <button class="hbtn" style="font-size:10px;padding:3px 8px" onclick="toggleManualThemes()" id="manual-theme-toggle">Show</button>
+      </div>
+      <div class="theme-grid" id="theme-grid" style="display:none">
+        <button class="theme-btn" data-t="academic" onclick="setTheme(this)">Academic</button>
+        <button class="theme-btn" data-t="magazine" onclick="setTheme(this)">Magazine</button>
+        <button class="theme-btn" data-t="codex" onclick="setTheme(this)">Codex</button>
+        <button class="theme-btn" data-t="corporate" onclick="setTheme(this)">Corporate</button>
+        <button class="theme-btn" data-t="detective" onclick="setTheme(this)">Detective</button>
+        <button class="theme-btn" data-t="cyberpunk" onclick="setTheme(this)">Cyberpunk</button>
+        <button class="theme-btn" data-t="museum" onclick="setTheme(this)">Museum</button>
+        <button class="theme-btn" data-t="research" onclick="setTheme(this)">Research</button>
+        <button class="theme-btn" data-t="noir" onclick="setTheme(this)">Noir</button>
+        <button class="theme-btn" data-t="newspaper" onclick="setTheme(this)">Newspaper</button>
+        <button class="theme-btn" data-t="scientific" onclick="setTheme(this)">Scientific</button>
+        <button class="theme-btn" data-t="minimalist" onclick="setTheme(this)">Minimal</button>
+        <button class="theme-btn" data-t="startup" onclick="setTheme(this)">Startup</button>
+        <button class="theme-btn" data-t="manuscript" onclick="setTheme(this)">Manuscript</button>
+      </div>
+    </div>
+
+    <div class="sb-section" id="custom-theme-section" style="display:none">
+      <span class="sb-label">Saved Presets</span>
+      <div class="theme-grid" id="custom-theme-grid"></div>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-label">Render Mode</span>
+      <div class="mode-list">
+        <button class="mode-btn active" data-m="document" onclick="setMode(this)"><i class="ti ti-file-text"></i>Document</button>
+        <button class="mode-btn" data-m="slides" onclick="setMode(this)"><i class="ti ti-presentation"></i>Presentation</button>
+        <button class="mode-btn" data-m="brief" onclick="setMode(this)"><i class="ti ti-list-details"></i>Summary Brief</button>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="sb-label">Custom CSS</span>
+        <button class="css-clear-btn" onclick="clearCustomCss()" title="Clear custom CSS">Clear</button>
+      </div>
+      <textarea id="custom-css-input" class="custom-css-ta"
+        placeholder="/* Just write CSS. Simplest: override variables, e.g. */&#10;:root {&#10;  --accent: #e63946;&#10;  --bg: #fff8f0;&#10;  --font-heading: 'Fraunces';&#10;  --font-body: 'Inter';&#10;}&#10;&#10;/* Or target elements directly: */&#10;h1 { color: #e63946; }"
+        oninput="onCustomCssInput()"></textarea>
+      <div class="css-hint">Applies on top of the selected theme. Leave blank to use the theme as-is.</div>
+      <div class="css-var-ref">
+        <button class="css-var-ref-toggle" onclick="toggleCssVarRef()">
+          <i class="ti ti-chevron-right" id="css-var-ref-chevron"></i>
+          Variables you can override <span id="css-var-ref-source" class="css-var-ref-source"></span>
+        </button>
+        <div id="css-var-ref-body" class="css-var-ref-body" style="display:none">
+          <div class="css-hint" style="margin:6px 0 8px">Click a variable to insert it — set to its current value — at your cursor.</div>
+          <div id="css-var-ref-chips" class="css-var-ref-chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-label">Import a Designed Doc</span>
+      <div class="css-hint" style="margin:0 0 8px">Already have a document with colors/fonts you like? Import it and turn its look into a reusable preset — no rebuilding by hand.</div>
+      <input type="file" id="import-design-file" accept=".docx,.html,.htm" style="display:none" onchange="onImportDesignFile(this.files[0])">
+      <button class="hbtn" style="width:100%;justify-content:center" onclick="document.getElementById('import-design-file').click()">
+        <i class="ti ti-upload"></i>Upload .docx or .html
+      </button>
+      <div id="import-design-result" style="display:none;margin-top:10px">
+        <div class="css-hint" id="import-design-source" style="margin-bottom:8px"></div>
+        <div id="import-swatches" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap"></div>
+        <div id="import-preview-box" style="display:none;margin-bottom:10px">
+          <div class="css-hint" style="margin-bottom:4px">Live preview — your current document with this design applied:</div>
+          <iframe id="import-preview-frame" style="width:100%;height:220px;border:1px solid #2a2a35;border-radius:8px;background:#fff"></iframe>
+        </div>
+        <div id="import-preview-empty-hint" class="css-hint" style="display:none;margin-bottom:10px">
+          Load or paste a document above to see a live preview here before saving.
+        </div>
+        <input type="text" id="import-preset-name" class="custom-css-ta" style="height:auto;padding:8px 10px;margin-bottom:8px" placeholder="Preset name">
+        <div style="display:flex;gap:6px">
+          <button class="hbtn" style="flex:1;justify-content:center" onclick="tweakImportedInDesigner()"><i class="ti ti-adjustments"></i>Tweak in Designer</button>
+          <button class="hbtn hbtn-primary" style="flex:1;justify-content:center" onclick="saveImportedAsPreset()"><i class="ti ti-check"></i>Save as Preset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-label">Icons</span>
+      <div class="mode-list">
+        <button class="mode-btn icon-btn active" data-icon="unicode" onclick="setIconStyle(this)"><i class="ti ti-typography"></i>Unicode (ℹ ⚠ ◆)</button>
+        <button class="mode-btn icon-btn" data-icon="fontawesome" onclick="setIconStyle(this)"><i class="ti ti-icons"></i>Font Awesome</button>
+        <button class="mode-btn icon-btn" data-icon="none" onclick="setIconStyle(this)"><i class="ti ti-square-off"></i>None</button>
+      </div>
+    </div>
+
+    <div class="sb-section" id="decoration-section">
+      <span class="sb-label">Decoration</span>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="decorate-toggle" onchange="onDecorationChange()">
+          Decorate pages <span style="opacity:.6">(margin ornaments + doodles, smart-matched to your content)</span>
+        </label>
+        <div id="doodle-density-row" style="display:none;flex-direction:column;gap:4px;padding-left:24px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;opacity:.75">
+            <span>Doodle density</span><span id="doodle-density-label">Balanced</span>
+          </div>
+          <input type="range" id="doodle-density-slider" min="0" max="4" step="1" value="2"
+                 oninput="onDecorationChange()" style="width:100%">
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="border-toggle" onchange="onDecorationChange()">
+          Add page border
+        </label>
+      </div>
+    </div>
+
+    <div class="sb-section" id="sug-section" style="display:none">
+      <span class="sb-label">Suggested Themes</span>
+      <div class="sug-list" id="sug-list"></div>
+    </div>
+
+  </div>
+
+  <!-- EDITOR + OUTPUT -->
+  <div id="editor">
+
+    <div id="input-panel">
+      <textarea id="content-input" placeholder="# My Document&#10;&#10;Paste Markdown, plain text, or raw prose here…&#10;&#10;The pipeline auto-detects structure — headings, entities, warnings,&#10;timelines, relationships — from any input format."></textarea>
+      <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+           ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <i class="ti ti-upload"></i>Drop a file or click to upload (.md .txt .docx .html .pdf)
+      </div>
+      <input type="file" id="file-input" accept=".md,.txt,.docx,.html,.pdf" style="display:none" onchange="handleFileSelect(event)">
+      <div class="input-bar">
+        <span class="detect-pill" id="detect-pill">Auto-detect</span>
+        <span class="mode-chip" id="mode-chip"></span>
+        <button class="btn-sample" onclick="loadSample()"><i class="ti ti-flask"></i>Sample</button>
+        <div class="spacer"></div>
+        <button class="btn-transform" id="transform-btn" onclick="transform()">
+          <i class="ti ti-sparkles"></i>Transform
+        </button>
+      </div>
+    </div>
+
+    <div id="output-area">
+      <!-- Output toolbar -->
+      <div class="output-bar" id="output-bar" style="display:none">
+        <span class="chip chip-acc" id="chip-theme">Academic</span>
+        <span class="chip" id="chip-mode">Document</span>
+        <span class="chip chip-grn" id="chip-blocks"></span>
+        <div class="spacer"></div>
+        <button class="hbtn" onclick="copyHTML()" style="font-size:10px"><i class="ti ti-copy"></i>Copy HTML</button>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon"><i class="ti ti-wand" style="color:var(--acc)"></i></div>
+        <h3>Transform your content</h3>
+        <p>Paste any text above — Markdown, plain prose, raw notes — and the pipeline infers structure automatically.</p>
+        <div class="quick-tips">
+          <div class="tip-row"><i class="ti ti-sparkles tip-icon"></i><span>Detects entities, warnings, timelines &amp; relationships automatically</span></div>
+          <div class="tip-row"><i class="ti ti-palette tip-icon"></i><span>12 themes — from Academic to Cyberpunk to Manuscript</span></div>
+          <div class="tip-row"><i class="ti ti-wand tip-icon"></i><span>Open Designer to build custom themes with live preview</span></div>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="loading-state" id="loading-state">
+        <div class="spinner"></div>
+        <div class="loading-msg" id="loading-msg">Running pipeline…</div>
+      </div>
+
+      <!-- Rendered output -->
+      <div class="output-content" id="output-content" style="display:none"></div>
+
+      <!-- Structure view -->
+      <div id="structure-view"><div id="structure-list"></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Fullscreen overlay -->
+<div class="fs-overlay" id="fs-overlay">
+  <div class="fs-bar">
+    <span style="font-size:12px;color:var(--t2);font-family:'Fraunces',serif;font-weight:700">Preview</span>
+    <span class="chip chip-acc" id="fs-chip-theme">—</span>
+    <span class="chip" id="fs-chip-mode">—</span>
+    <span class="chip chip-grn" id="fs-chip-blocks">—</span>
+    <div class="spacer"></div>
+    <button class="hbtn" onclick="copyHTML()" style="font-size:10px"><i class="ti ti-copy"></i>Copy HTML</button>
+    <button class="hbtn" onclick="closeFullscreen()"><i class="ti ti-x"></i>Close</button>
+  </div>
+  <div id="fs-iframe-wrap"></div>
+</div>
+
+<!-- PPTX mode dialog -->
+<div class="modal-overlay" id="pptx-modal">
+  <div class="modal">
+    <h3>Export to PowerPoint</h3>
+    <div class="modal-field">
+      <label>Presentation Mode</label>
+      <div class="radio-group">
+        <div class="radio-opt selected" id="pptx-opt-presenter" onclick="setPptxMode('presenter')">
+          <input type="radio" name="pptx_mode" value="presenter" checked>
+          <div>
+            <div style="font-size:12px;font-weight:600">Presenter Slides</div>
+            <div style="font-size:9px;opacity:.6;margin-top:1px">Sparse · Talking points</div>
+          </div>
+        </div>
+        <div class="radio-opt" id="pptx-opt-detailed" onclick="setPptxMode('detailed')">
+          <input type="radio" name="pptx_mode" value="detailed">
+          <div>
+            <div style="font-size:12px;font-weight:600">Detailed Deck</div>
+            <div style="font-size:9px;opacity:.6;margin-top:1px">More bullets · Standalone</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-row">
+      <button class="hbtn" onclick="closePptxDialog()">Cancel</button>
+      <button class="btn-transform" style="font-size:11px;padding:7px 16px" onclick="exportPPTX()"><i class="ti ti-download"></i>Export</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentTheme = 'auto', currentMode = 'document', currentTab = 'editor';
+let lastHTML = '', lastContent = '', lastBlocks = [], lastSessionId = '';
+let currentCustomCss = '', currentIconStyle = 'unicode', cssTimer = null;
+let currentDecorate = false, currentBorder = false, currentDecorationStyle = 'auto', currentDoodleDensity = 2;
+let lastAutoDesignProps = null, lastAutoDesignElements = null;
+
+const THEME_LABELS = {
+  academic:'Academic', magazine:'Magazine', codex:'Fantasy Codex',
+  corporate:'Corporate', detective:'Detective', cyberpunk:'Cyberpunk',
+  noir:'Noir', newspaper:'Newspaper', scientific:'Scientific',
+  minimalist:'Minimalist', startup:'Startup', manuscript:'Manuscript'
+};
+const MODE_LABELS = { document:'Document', slides:'Presentation', brief:'Summary Brief' };
+const PIPE_MSGS  = ['Parsing content…','Detecting structure…','Scoring importance…','Applying theme…','Rendering…'];
+
+const TYPE_COLORS = {
+  heading:       { bg:'rgba(99,102,241,.12)',  color:'#818CF8' },
+  entity:        { bg:'rgba(167,139,250,.12)', color:'#A78BFA' },
+  callout:       { bg:'rgba(52,211,153,.10)',  color:'#34D399' },
+  warning:       { bg:'rgba(248,113,113,.12)', color:'#F87171' },
+  timeline_event:{ bg:'rgba(251,191,36,.10)',  color:'#FBBF24' },
+  relationship:  { bg:'rgba(251,146,60,.10)',  color:'#FB923C' },
+  paragraph:     { bg:'rgba(255,255,255,.04)', color:'#635F78' },
+  list:          { bg:'rgba(52,211,153,.08)',  color:'#6EE7B7' },
+  quote:         { bg:'rgba(167,139,250,.10)', color:'#C4B5FD' },
+  definition:    { bg:'rgba(96,165,250,.10)',  color:'#93C5FD' },
+  code:          { bg:'rgba(255,255,255,.04)', color:'#635F78' },
+  table:         { bg:'rgba(96,165,250,.08)',  color:'#93C5FD' },
+  reference:     { bg:'rgba(255,255,255,.04)', color:'#4B4860' },
+};
+
+// ── Shadow DOM rendering — isolated styles, no iframe sizing issues ───────────
+function renderIframe(html, containerId) {
+  const c = document.getElementById(containerId || 'output-content');
+  c.innerHTML = '';
+
+  // Extract scoped fragment embedded by server as <!--IAS_FRAGMENT:{...}:IAS_FRAGMENT-->
+  const fragMatch = html.match(/<!--IAS_FRAGMENT:([\s\S]+?):IAS_FRAGMENT-->/);
+  if (fragMatch) {
+    try {
+      const frag = JSON.parse(fragMatch[1]);
+      _injectScoped(c, frag.css, frag.html, frag.fa);
+      return;
+    } catch(e) { /* fall through to legacy path */ }
+  }
+
+  // Legacy fallback: full HTML document — extract parts manually
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const styleEl = doc.querySelector('style');
+  const rawCSS = styleEl ? styleEl.textContent : '';
+  const bodyHTML = doc.body ? doc.body.innerHTML : '';
+  const scoped = _scopeCSS(rawCSS, '.ias-doc');
+  _injectScoped(c, scoped, bodyHTML);
+}
+
+function _injectScoped(container, scopedCSS, bodyHTML, needsFontAwesome) {
+  // Remove old theme font links to prevent stale font CSS conflicting with new theme
+  document.querySelectorAll('link[data-ias-font]').forEach(l => l.remove());
+
+  // Load Font Awesome CDN when the "Font Awesome" icon style is active
+  if (needsFontAwesome && !document.getElementById('ias-fa-link')) {
+    const fa = document.createElement('link');
+    fa.id = 'ias-fa-link';
+    fa.rel = 'stylesheet';
+    fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
+    document.head.appendChild(fa);
+  }
+
+  // Inject font links for this theme
+  const fontMatch = scopedCSS.match(/\/\* FONT_URLS:(.*?):FONT_URLS \*\//);
+  if (fontMatch && fontMatch[1]) {
+    fontMatch[1].split('|').forEach(url => {
+      if (!url) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.setAttribute('data-ias-font', '1');
+      document.head.appendChild(link);
+    });
+  }
+
+  // Replace outer theme style tag (for document mode scoped CSS)
+  const styleId = 'ias-theme-style';
+  let styleTag = document.getElementById(styleId);
+  if (styleTag) styleTag.remove();
+  styleTag = document.createElement('style');
+  styleTag.id = styleId;
+  document.head.appendChild(styleTag);
+  styleTag.textContent = scopedCSS;
+
+  // Set output-content background to match theme — check scoped CSS first, then inline style
+  let themeBg = null;
+  const bgMatch = scopedCSS.match(/\.ias-doc\s*\{[^}]*--bg:\s*(#[A-Fa-f0-9]+)/);
+  if (bgMatch) { themeBg = bgMatch[1]; }
+  else {
+    // slides/brief: bg is in the embedded <style> body { background: #xxx }
+    const inlineBg = bodyHTML.match(/body\s*\{[^}]*background:\s*(#[A-Fa-f0-9]+)/);
+    if (inlineBg) themeBg = inlineBg[1];
+  }
+  if (themeBg) {
+    document.getElementById('output-content').style.background = themeBg;
+    const fs = document.getElementById('fs-iframe-wrap');
+    if (fs) fs.style.background = themeBg;
+  }
+
+  // Clear container and inject fresh wrapper
+  container.innerHTML = '';
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ias-doc';
+  wrapper.innerHTML = bodyHTML;
+  container.appendChild(wrapper);
+
+  // CRITICAL: browsers ignore <style> tags inserted via innerHTML.
+  // Hoist any embedded <style> blocks (used by slides/brief) into <head>.
+  document.querySelectorAll('style[data-ias-inline]').forEach(s => s.remove());
+  let inlineIdx = 0;
+  wrapper.querySelectorAll('style').forEach(s => {
+    // Extract any @import font URLs from the inline style and add as <link> tags
+    const importRe = /@import\s+url\(\s*['"]?([^'")\s]+)['"]?\s*\)\s*;/g;
+    let im;
+    while ((im = importRe.exec(s.textContent)) !== null) {
+      if (!document.querySelector(`link[href="${im[1]}"]`)) {
+        const fl = document.createElement('link');
+        fl.rel = 'stylesheet'; fl.href = im[1];
+        fl.setAttribute('data-ias-font', '1');
+        document.head.appendChild(fl);
+      }
+    }
+    // Strip @import lines then hoist the rest
+    const hoisted = document.createElement('style');
+    hoisted.setAttribute('data-ias-inline', String(inlineIdx++));
+    hoisted.textContent = s.textContent.replace(/@import\s+url\([^)]*\)\s*;/g, '');
+    document.head.appendChild(hoisted);
+    s.remove();
+  });
+}
+
+function _scopeCSS(css, scope) {
+  // Extract and remove @import lines, collect font URLs
+  const fontUrls = [];
+  css = css.replace(/@import\s+url\(\s*['"]?([^'")\s]+)['"]?\s*\)[^;]*;/g, (_, url) => {
+    fontUrls.push(url); return '';
+  });
+
+  let result = '';
+  let depth = 0, selBuf = '';
+  for (let i = 0; i < css.length; i++) {
+    const ch = css[i];
+    if (ch === '{') {
+      if (depth === 0) {
+        const sel = selBuf.trim(); selBuf = '';
+        if (sel.startsWith('@')) {
+          result += sel + ' {';
+        } else {
+          const parts = sel.split(',').map(p => p.trim()).filter(Boolean);
+          const scoped = parts.map(p => {
+            if (p === 'html' || p === 'body' || p === ':root') return scope;
+            if (p.startsWith(':root')) return scope + p.slice(5);
+            return scope + ' ' + p;
+          });
+          result += scoped.join(', ') + ' {';
+        }
+        depth = 1;
+      } else { result += ch; depth++; }
+    } else if (ch === '}') {
+      depth--; result += '}';
+    } else {
+      if (depth === 0) selBuf += ch; else result += ch;
+    }
+  }
+
+  const fontComment = fontUrls.length ? '/* FONT_URLS:' + fontUrls.join('|') + ':FONT_URLS */\n' : '';
+  return fontComment + result;
+}
+
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function setTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.htab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const oc = document.getElementById('output-content');
+  const sv = document.getElementById('structure-view');
+  const es = document.getElementById('empty-state');
+  const ob = document.getElementById('output-bar');
+  if (tab === 'structure') {
+    oc.style.display = 'none';
+    ob.style.display = 'none';
+    if (lastBlocks.length) {
+      renderStructure(lastBlocks);
+      sv.style.display = 'block';
+      es.style.display = 'none';
+    } else {
+      sv.style.display = 'none';
+      es.style.display = 'flex';
+    }
+  } else {
+    // Editor tab
+    sv.style.display = 'none';
+    if (lastHTML) {
+      oc.style.display = 'block';
+      ob.style.display = 'flex';
+      es.style.display = 'none';
+      // Re-render into shadow DOM in case it was cleared
+      if (!oc.querySelector('.ias-doc')) renderIframe(lastHTML);
+    } else {
+      oc.style.display = 'none';
+      ob.style.display = 'none';
+      es.style.display = 'flex';
+    }
+  }
+}
+
+// ── Theme & Mode ──────────────────────────────────────────────────────────────
+function setTheme(btn) {
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('auto-design-btn').classList.remove('active');
+  document.getElementById('auto-design-profile').style.display = 'none';
+  currentTheme = btn.dataset.t;
+  document.getElementById('chip-theme').textContent = THEME_LABELS[currentTheme] || currentTheme;
+  // Clear designer CSS — user has explicitly chosen a standard theme
+  window._customDesignerCSS   = null;
+  window._customDesignerTheme = null;
+  const pill = document.getElementById('detect-pill');
+  if (pill) { pill.textContent = 'Auto-detect'; pill.classList.remove('detected'); }
+  if (lastHTML) rerender();
+  if (cssVarRefOpen) refreshCssVarRef();
+}
+function setAutoDesign() {
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('auto-design-btn').classList.add('active');
+  currentTheme = 'auto';
+  document.getElementById('chip-theme').textContent = 'Auto-Design';
+  window._customDesignerCSS   = null;
+  window._customDesignerTheme = null;
+  if (lastHTML) rerender();
+  if (cssVarRefOpen) refreshCssVarRef();
+}
+function toggleManualThemes() {
+  const grid = document.getElementById('theme-grid');
+  const btn = document.getElementById('manual-theme-toggle');
+  const showing = grid.style.display !== 'none';
+  grid.style.display = showing ? 'none' : 'grid';
+  btn.textContent = showing ? 'Show' : 'Hide';
+}
+function showAutoDesignProfile(profile) {
+  const el = document.getElementById('auto-design-profile');
+  if (!profile) { el.style.display = 'none'; return; }
+  const genre = (profile.genre || 'neutral').replace(/_/g, ' ');
+  let text = `Detected mood: ${genre} · ${profile.heading_font} + ${profile.body_font}`;
+  if (profile.field_labels_found && profile.field_labels_found.length) {
+    text += ` · styled ${profile.field_labels_found.length} recurring label${profile.field_labels_found.length > 1 ? 's' : ''} (${profile.field_labels_found.slice(0,3).join(', ')})`;
+  }
+  if (profile.pull_quote_count) text += ` · ${profile.pull_quote_count} pull-quotes`;
+  el.textContent = text;
+  el.style.display = 'block';
+}
+function setMode(btn) {
+  document.querySelectorAll('.mode-btn:not(.icon-btn)').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMode = btn.dataset.m;
+  document.getElementById('chip-mode').textContent = MODE_LABELS[currentMode] || currentMode;
+  if (lastHTML) rerender();
+}
+function setIconStyle(btn) {
+  document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentIconStyle = btn.dataset.icon;
+  if (lastHTML) rerender();
+}
+const DOODLE_DENSITY_LABELS = ['Minimal', 'Sparse', 'Balanced', 'Rich', 'Maximum'];
+function onDecorationChange() {
+  currentDecorate = document.getElementById('decorate-toggle').checked;
+  currentBorder = document.getElementById('border-toggle').checked;
+  currentDoodleDensity = parseInt(document.getElementById('doodle-density-slider').value, 10);
+  document.getElementById('doodle-density-row').style.display = currentDecorate ? 'flex' : 'none';
+  document.getElementById('doodle-density-label').textContent = DOODLE_DENSITY_LABELS[currentDoodleDensity];
+  if (lastHTML) rerender();
+}
+function onCustomCssInput() {
+  currentCustomCss = document.getElementById('custom-css-input').value;
+  clearTimeout(cssTimer);
+  cssTimer = setTimeout(() => { if (lastHTML) rerender(); }, 600);
+}
+function clearCustomCss() {
+  document.getElementById('custom-css-input').value = '';
+  currentCustomCss = '';
+  window._customDesignerCSS   = null;
+  window._customDesignerTheme = null;
+  if (lastHTML) rerender();
+}
+
+// ── Custom CSS variable reference — shows the ACTIVE theme's current
+// resolved values (built-in preset via /api/themes/<id>/defaults, or the
+// live auto-design result for the current doc) so a person overriding a
+// variable can see what it is before they change it, and insert a
+// ready-to-edit line with one click instead of guessing names/syntax. ──────
+const CSS_VAR_REF = [
+  { key: 'color_accent',  css: '--accent',  kind: 'color' },
+  { key: 'color_bg',      css: '--bg',      kind: 'color' },
+  { key: 'color_text',    css: '--text',    kind: 'color' },
+  { key: 'color_entity',  css: '--entity',  kind: 'color' },
+  { key: 'color_callout', css: '--call',    kind: 'color' },
+  { key: 'color_warning', css: '--warn',    kind: 'color' },
+  { key: 'font_heading',  css: '--font-heading', kind: 'font' },
+  { key: 'font_body',     css: '--font-body',    kind: 'font' },
+];
+let cssVarRefOpen = false;
+let cssVarRefCache = { theme: null, props: null };
+
+function toggleCssVarRef() {
+  cssVarRefOpen = !cssVarRefOpen;
+  document.getElementById('css-var-ref-body').style.display = cssVarRefOpen ? 'block' : 'none';
+  document.querySelector('.css-var-ref-toggle').classList.toggle('open', cssVarRefOpen);
+  document.getElementById('css-var-ref-chevron').className = cssVarRefOpen ? 'ti ti-chevron-down' : 'ti ti-chevron-right';
+  if (cssVarRefOpen) refreshCssVarRef();
+}
+
+async function refreshCssVarRef() {
+  let props = null, sourceLabel = '';
+  if (currentTheme === 'auto') {
+    props = lastAutoDesignProps;
+    sourceLabel = props ? '(current auto-design)' : '(transform a doc first)';
+  } else {
+    try {
+      const resp = await fetch('/api/themes/' + currentTheme + '/defaults');
+      if (resp.ok) props = await resp.json();
+      sourceLabel = '(' + (THEME_LABELS[currentTheme] || currentTheme) + ' defaults)';
+    } catch (e) { /* leave props null, chips just won't show values */ }
+  }
+  document.getElementById('css-var-ref-source').textContent = sourceLabel;
+  renderCssVarChips(props || {});
+}
+
+function renderCssVarChips(props) {
+  const box = document.getElementById('css-var-ref-chips');
+  box.innerHTML = '';
+  CSS_VAR_REF.forEach(v => {
+    const val = props[v.key];
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'css-var-chip';
+    chip.title = 'Insert ' + v.css + (val ? ': ' + val : '');
+    if (v.kind === 'color') {
+      const sw = document.createElement('span');
+      sw.className = 'swatch';
+      sw.style.background = val || '#3a3a44';
+      chip.appendChild(sw);
+      chip.appendChild(document.createTextNode(v.css));
+    } else {
+      chip.innerHTML = '<span class="fname">' + v.css + '</span>';
+    }
+    chip.onclick = () => insertCssVar(v.css, val, v.kind);
+    box.appendChild(chip);
+  });
+}
+
+function insertCssVar(cssVar, currentVal, kind) {
+  const ta = document.getElementById('custom-css-input');
+  const line = kind === 'font'
+    ? `  ${cssVar}: '${currentVal || 'Your Font'}';\n`
+    : `  ${cssVar}: ${currentVal || '#000000'};\n`;
+  const text = ta.value;
+  const rootMatch = text.match(/:root\s*\{/);
+  if (rootMatch) {
+    // Drop the new line right after the existing :root { so it joins
+    // whatever overrides are already there.
+    const insertAt = rootMatch.index + rootMatch[0].length;
+    ta.value = text.slice(0, insertAt) + '\n' + line + text.slice(insertAt);
+  } else {
+    ta.value = text + (text.trim() ? '\n\n' : '') + ':root {\n' + line + '}\n';
+  }
+  ta.focus();
+  onCustomCssInput();
+}
+
+let lastImport = null;
+
+async function loadThemes() {
+  try {
+    const resp = await fetch('/api/themes/custom');
+    const customs = await resp.json();
+    const section = document.getElementById('custom-theme-section');
+    const grid = document.getElementById('custom-theme-grid');
+    if (!Array.isArray(customs) || !customs.length) {
+      section.style.display = 'none';
+      return;
+    }
+    grid.innerHTML = '';
+    customs.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'theme-btn';
+      btn.dataset.t = t.id;
+      btn.textContent = (t.icon ? t.icon + ' ' : '') + t.name;
+      btn.onclick = () => setTheme(btn);
+      grid.appendChild(btn);
+    });
+    section.style.display = 'block';
+  } catch (e) { /* saved presets are a nice-to-have, fail quietly */ }
+}
+
+async function onImportDesignFile(file) {
+  if (!file) return;
+  showToast('Extracting design…');
+  const form = new FormData();
+  form.append('file', file);
+  const currentContent = (document.getElementById('content-input').value || lastContent || '').trim();
+  if (currentContent) form.append('content', currentContent);
+  let resp;
+  try {
+    resp = await fetch('/api/theme/import', { method: 'POST', body: form });
+  } catch (e) {
+    return showToast('Import failed: ' + e.message);
+  }
+  const data = await resp.json();
+  if (!resp.ok) return showToast('Import failed: ' + data.error);
+
+  lastImport = data;
+  document.getElementById('import-design-source').textContent =
+    `Extracted from ${data.source_type.toUpperCase()} — review below, tweak if needed, then save.`;
+  document.getElementById('import-preset-name').value = data.suggested_name || 'Imported Theme';
+
+  const swKeys = ['color_bg', 'color_text', 'color_accent', 'color_entity', 'color_callout', 'color_warning'];
+  const sw = document.getElementById('import-swatches');
+  sw.innerHTML = '';
+  swKeys.forEach(k => {
+    const d = document.createElement('div');
+    d.className = 'import-swatch';
+    d.style.background = data.properties[k] || '#ccc';
+    d.title = k + ': ' + (data.properties[k] || '');
+    sw.appendChild(d);
+  });
+
+  const previewBox = document.getElementById('import-preview-box');
+  const emptyHint  = document.getElementById('import-preview-empty-hint');
+  if (data.preview_html) {
+    // A real <iframe srcdoc> — not the shared-DOM renderIframe() path used
+    // for the main output panel — so this preview can never clobber (or be
+    // clobbered by) whatever theme/CSS is currently active in the main
+    // editor view; it's a fully isolated browsing context.
+    document.getElementById('import-preview-frame').srcdoc = data.preview_html;
+    previewBox.style.display = 'block';
+    emptyHint.style.display  = 'none';
+  } else {
+    previewBox.style.display = 'none';
+    emptyHint.style.display  = 'block';
+  }
+
+  document.getElementById('import-design-result').style.display = 'block';
+  showToast('Design extracted — review and save');
+}
+
+async function saveImportedAsPreset() {
+  if (!lastImport) return;
+  const name = document.getElementById('import-preset-name').value.trim();
+  if (!name) return showToast('Give the preset a name first');
+  const id = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const resp = await fetch('/api/themes/custom', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id, name, description: 'Imported design', icon: '📥',
+      properties: lastImport.properties, elements: lastImport.elements
+    })
+  });
+  const data = await resp.json();
+  if (!resp.ok) return showToast('Save failed: ' + data.error);
+  showToast(`"${name}" saved as a preset`);
+  document.getElementById('import-design-result').style.display = 'none';
+  if (typeof loadThemes === 'function') loadThemes();
+}
+
+function tweakImportedInDesigner() {
+  if (!lastImport) return;
+  sessionStorage.setItem('ias_import_props', JSON.stringify(lastImport.properties));
+  sessionStorage.setItem('ias_import_elements', JSON.stringify(lastImport.elements));
+  if (lastContent) sessionStorage.setItem('ias_content', lastContent);
+  window.open('/designer', '_blank');
+}
+
+// ── Loading message cycling ───────────────────────────────────────────────────
+function resetPipe() {
+  document.getElementById('loading-msg').textContent = PIPE_MSGS[0];
+}
+async function animPipe() {
+  for (let i = 0; i < PIPE_MSGS.length; i++) {
+    document.getElementById('loading-msg').textContent = PIPE_MSGS[i];
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+function donePipe() { /* no-op: kept as a call-site no-op so existing callers don't need changes */ }
+
+// ── Shared UI helpers ─────────────────────────────────────────────────────────
+function showLoading(msg) {
+  document.getElementById('empty-state').style.display   = 'none';
+  document.getElementById('output-content').style.display= 'none';
+  document.getElementById('output-bar').style.display    = 'none';
+  document.getElementById('structure-view').style.display= 'none';
+  document.getElementById('loading-state').style.display = 'flex';
+  if (msg) document.getElementById('loading-msg').textContent = msg;
+}
+function hideLoading() {
+  document.getElementById('loading-state').style.display = 'none';
+}
+function showOutput() {
+  document.getElementById('output-content').style.display = 'block';
+  document.getElementById('output-bar').style.display     = 'flex';
+}
+function showError(msg) {
+  hideLoading(); resetPipe();
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('empty-state').querySelector('h3').textContent = 'Error';
+  document.getElementById('empty-state').querySelector('p').textContent  = msg;
+}
+
+// ── handleResult — shared by transform, uploadFile, rerender ─────────────────
+function handleResult(data) {
+  lastHTML    = data.html    || '';
+  lastBlocks  = data.blocks  || [];
+  if (data.session_id)  lastSessionId = data.session_id;
+  if (data.raw_content) lastContent   = data.raw_content;
+  lastAutoDesignProps    = data.auto_design_properties || null;
+  lastAutoDesignElements = data.auto_design_elements   || null;
+  if (cssVarRefOpen && currentTheme === 'auto') refreshCssVarRef();
+
+  donePipe(); hideLoading();
+
+  const themeLabel = data.theme === 'auto' ? 'Auto-Design' : (THEME_LABELS[data.theme] || data.theme || currentTheme);
+  document.getElementById('chip-theme').textContent  = themeLabel;
+  document.getElementById('chip-mode').textContent   = MODE_LABELS[data.mode]    || data.mode   || currentMode;
+  document.getElementById('chip-blocks').textContent = (data.block_count || lastBlocks.length) + ' blocks';
+  showAutoDesignProfile(data.auto_design_profile);
+
+  const pill = document.getElementById('detect-pill');
+  if (data.project_type && data.project_type !== 'Document') {
+    pill.textContent = data.project_type + ' (' + Math.round(data.type_confidence) + '%)';
+    pill.classList.add('detected');
+  }
+
+  const mc = document.getElementById('mode-chip');
+  if (data.input_mode) {
+    const ML = { markdown:'Markdown', plain:'Plain text', raw:'Raw → inferred', docx:'DOCX' };
+    mc.textContent = ML[data.input_mode] || data.input_mode;
+    mc.style.display = 'inline';
+  }
+
+  if (data.suggestions && data.suggestions.length) {
+    const sec  = document.getElementById('sug-section');
+    const list = document.getElementById('sug-list');
+    sec.style.display = 'block'; list.innerHTML = '';
+    data.suggestions.forEach(([tid, conf]) => {
+      const d = document.createElement('div'); d.className = 'sug-item';
+      d.innerHTML = `<span>${THEME_LABELS[tid]||tid} <small style="opacity:.5">${Math.round(conf)}%</small></span><button class="sug-apply" onclick="applySug('${tid}')">Apply</button>`;
+      list.appendChild(d);
+    });
+  }
+
+  if (currentTab === 'editor') {
+    renderIframe(lastHTML);
+    showOutput();
+  } else {
+    renderStructure(lastBlocks);
+    document.getElementById('structure-view').style.display = 'block';
+  }
+}
+
+// ── Transform (from textarea) ─────────────────────────────────────────────────
+async function transform() {
+  const content = document.getElementById('content-input').value.trim();
+  if (!content) return;
+  lastContent   = content;
+  lastSessionId = '';
+
+  const btn = document.getElementById('transform-btn');
+  btn.disabled = true;
+  showLoading();
+  const ap = animPipe();
+  try {
+    const body = { content, theme: currentTheme, mode: currentMode, icon_style: currentIconStyle,
+                    decorate: currentDecorate, border: currentBorder, decoration_style: currentDecorationStyle, doodle_density: currentDoodleDensity };
+    // Designer CSS (from the full Designer app) takes priority if active;
+    // otherwise fall back to whatever's in the simple Custom CSS box.
+    if (window._customDesignerCSS) {
+      body.custom_css = window._customDesignerCSS;
+      if (window._customDesignerTheme) body.theme = window._customDesignerTheme;
+    } else if (currentCustomCss.trim()) {
+      body.custom_css = currentCustomCss;
+    }
+    const resp = await fetch('/api/transform', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    await ap;
+    if (!resp.ok) { const e = await resp.json(); throw new Error(e.error || 'Server error'); }
+    handleResult(await resp.json());
+  } catch(err) {
+    showError(err.message);
+  }
+  btn.disabled = false;
+}
+
+// ── Upload file ────────────────────────────────────────────────────────────────
+function handleDragOver(e)  { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function handleDragLeave()  { document.getElementById('drop-zone').classList.remove('drag-over'); }
+function handleDrop(e)      { e.preventDefault(); document.getElementById('drop-zone').classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) uploadFile(f); }
+function handleFileSelect(e){ const f = e.target.files[0]; if (f) uploadFile(f); e.target.value = ''; }
+
+async function uploadFile(file) {
+  document.getElementById('transform-btn').disabled = true;
+  showLoading();
+  const ap = animPipe();
+  try {
+    const form = new FormData();
+    form.append('file', file); form.append('theme', currentTheme); form.append('mode', currentMode);
+    form.append('icon_style', currentIconStyle);
+    form.append('decorate', currentDecorate);
+    form.append('border', currentBorder);
+    form.append('decoration_style', currentDecorationStyle);
+    form.append('doodle_density', currentDoodleDensity);
+    if (currentCustomCss.trim()) form.append('custom_css', currentCustomCss);
+    const resp = await fetch('/api/upload', { method: 'POST', body: form });
+    await ap;
+    if (!resp.ok) { const e = await resp.json(); throw new Error(e.error || 'Upload error'); }
+    const data = await resp.json();
+    handleResult(data);
+    // Populate textarea for .md / .txt so transform() also works
+    if (/\.(md|txt)$/i.test(file.name)) {
+      const r = new FileReader();
+      r.onload = ev => { document.getElementById('content-input').value = ev.target.result; };
+      r.readAsText(file);
+    }
+  } catch(err) {
+    showError(err.message);
+  }
+  document.getElementById('transform-btn').disabled = false;
+}
+
+// ── Rerender (theme / mode change, or designer apply) ─────────────────────────
+async function rerender() {
+  if (!lastSessionId) {
+    // Text content — re-run transform (which will include _customDesignerCSS if set)
+    const txt = lastContent || document.getElementById('content-input').value.trim();
+    if (txt) { lastContent = txt; return transform(); }
+    return;
+  }
+  // Uploaded file — use /api/rerender
+  showLoading('Re-rendering…');
+  try {
+    const body = { session_id: lastSessionId, theme: currentTheme, mode: currentMode, icon_style: currentIconStyle,
+                    decorate: currentDecorate, border: currentBorder, decoration_style: currentDecorationStyle, doodle_density: currentDoodleDensity };
+    if (window._customDesignerCSS) {
+      body.custom_css = window._customDesignerCSS;
+      if (window._customDesignerTheme) body.theme = window._customDesignerTheme;
+    } else if (currentCustomCss.trim()) {
+      body.custom_css = currentCustomCss;
+    }
+    const resp = await fetch('/api/rerender', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Rerender error');
+    lastHTML = data.html || lastHTML;
+    document.getElementById('chip-blocks').textContent = (data.block_count || lastBlocks.length) + ' blocks';
+    document.getElementById('chip-theme').textContent  = THEME_LABELS[currentTheme] || currentTheme;
+    document.getElementById('chip-mode').textContent   = MODE_LABELS[currentMode]   || currentMode;
+    hideLoading();
+    renderIframe(lastHTML);
+    showOutput();
+  } catch(err) {
+    hideLoading();
+    showOutput();
+    showToast('Rerender failed: ' + err.message);
+  }
+}
+
+// ── Structure view ─────────────────────────────────────────────────────────────
+function renderStructure(blocks) {
+  const list = document.getElementById('structure-list');
+  list.innerHTML = '';
+  blocks.forEach(b => {
+    const tc = TYPE_COLORS[b.type] || TYPE_COLORS.paragraph;
+    const hi = b.importance_score >= 70;
+    const snippet = (b.content || '').slice(0, 86) + (b.content && b.content.length > 86 ? '…' : '');
+    const d = document.createElement('div'); d.className = 'block-row';
+    d.innerHTML = `<span class="block-type" style="background:${tc.bg};color:${tc.color}">${b.type}</span><span class="block-content">${snippet}</span><span class="block-score${hi?' hi':''}">${Math.round(b.importance_score)}</span>`;
+    list.appendChild(d);
+  });
+}
+
+// ── Apply suggestion ──────────────────────────────────────────────────────────
+function applySug(tid) {
+  const btn = document.querySelector(`.theme-btn[data-t="${tid}"]`);
+  if (btn) {
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTheme = tid;
+    document.getElementById('chip-theme').textContent = THEME_LABELS[tid] || tid;
+  }
+  // Clear designer CSS — suggested themes are standard themes
+  window._customDesignerCSS   = null;
+  window._customDesignerTheme = null;
+  rerender();
+}
+
+// ── Exports ────────────────────────────────────────────────────────────────────
+function downloadBlob(blob, name) {
+  const u = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), { href: u, download: name });
+  a.click(); URL.revokeObjectURL(u);
+}
+
+async function exportHTML() {
+  if (!lastHTML) return showToast('Transform content first');
+  const resp = await fetch('/api/export/html', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ html: lastHTML, filename: 'ias-export' })
+  });
+  downloadBlob(await resp.blob(), 'ias-export.html');
+}
+
+async function exportPDF() {
+  if (!lastHTML) return showToast('Transform content first');
+  showToast('Generating PDF…');
+  const body = { html: lastHTML, filename: 'ias-export', theme: currentTheme, icon_style: currentIconStyle,
+                  decorate: currentDecorate, border: currentBorder, decoration_style: currentDecorationStyle, doodle_density: currentDoodleDensity };
+  if (lastSessionId) body.session_id = lastSessionId;
+  if (lastContent) body.content = lastContent;
+  if (window._customDesignerCSS) body.custom_css = window._customDesignerCSS;
+  else if (currentCustomCss.trim()) body.custom_css = currentCustomCss;
+  const resp = await fetch('/api/export/pdf', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) { const e = await resp.json(); return showToast('PDF: ' + e.error); }
+  downloadBlob(await resp.blob(), 'ias-export.pdf');
+}
+
+async function exportDOCX() {
+  const src = lastContent || document.getElementById('content-input').value.trim();
+  if (!src && !lastSessionId) return showToast('Transform content first');
+  const body = { theme: currentTheme, filename: 'ias-export', icon_style: currentIconStyle,
+                  decorate: currentDecorate, border: currentBorder, decoration_style: currentDecorationStyle, doodle_density: currentDoodleDensity };
+  if (lastSessionId) body.session_id = lastSessionId; else body.content = src;
+  if (window._customDesignerCSS) body.custom_css = window._customDesignerCSS;
+  else if (currentCustomCss.trim()) body.custom_css = currentCustomCss;
+  const resp = await fetch('/api/export/docx', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) { const e = await resp.json(); return showToast('DOCX: ' + e.error); }
+  downloadBlob(await resp.blob(), 'ias-export.docx');
+}
+
+function copyHTML() {
+  if (!lastHTML) { showToast('Nothing to copy yet'); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastHTML).then(() => showToast('HTML copied!')).catch(() => _fallbackCopy(lastHTML));
+  } else {
+    _fallbackCopy(lastHTML);
+  }
+}
+function _fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); showToast('HTML copied!'); }
+  catch(e) { showToast('Copy failed — try Ctrl+A in the preview'); }
+  document.body.removeChild(ta);
+}
+
+// ── Fullscreen ────────────────────────────────────────────────────────────────
+function toggleFullscreen() {
+  if (!lastHTML) { showToast('Transform content first'); return; }
+  const overlay = document.getElementById('fs-overlay');
+  renderIframe(lastHTML, 'fs-iframe-wrap');
+  document.getElementById('fs-chip-theme').textContent  = THEME_LABELS[currentTheme] || currentTheme;
+  document.getElementById('fs-chip-mode').textContent   = MODE_LABELS[currentMode]   || currentMode;
+  document.getElementById('fs-chip-blocks').textContent = lastBlocks.length + ' blocks';
+  overlay.classList.add('active');
+  document.getElementById('fs-icon').className = 'ti ti-arrows-minimize';
+}
+function closeFullscreen() {
+  document.getElementById('fs-overlay').classList.remove('active');
+  document.getElementById('fs-icon').className = 'ti ti-arrows-maximize';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
+
+// ── PPTX ──────────────────────────────────────────────────────────────────────
+let pptxMode = 'presenter';
+function openPptxDialog() {
+  if (!lastHTML) { showToast('Transform content first'); return; }
+  document.getElementById('pptx-modal').classList.add('open');
+}
+function closePptxDialog() { document.getElementById('pptx-modal').classList.remove('open'); }
+function setPptxMode(mode) {
+  pptxMode = mode;
+  ['presenter','detailed'].forEach(m => {
+    document.getElementById('pptx-opt-' + m).classList.toggle('selected', m === mode);
+  });
+}
+async function exportPPTX() {
+  closePptxDialog();
+  showToast('Generating PowerPoint…');
+  try {
+    const body = { theme: currentTheme, pptx_mode: pptxMode, filename: 'ias-presentation',
+                    decorate: currentDecorate, decoration_style: currentDecorationStyle };
+    if (lastSessionId) body.session_id = lastSessionId;
+    else               body.content    = lastContent;
+    const resp = await fetch('/api/export/pptx', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) { const e = await resp.json(); return showToast('PPTX: ' + e.error); }
+    downloadBlob(await resp.blob(), 'ias-presentation.pptx');
+    showToast('PowerPoint downloaded ✅');
+  } catch(e) { showToast('PPTX export failed: ' + e.message); }
+}
+document.getElementById('pptx-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closePptxDialog(); });
+
+// ── Designer sync ─────────────────────────────────────────────────────────────
+function openDesigner() {
+  const textContent = lastContent || document.getElementById('content-input').value.trim();
+  if (textContent) sessionStorage.setItem('ias_content', textContent);
+  if (lastHTML)          sessionStorage.setItem('ias_last_html', lastHTML);
+  if (lastSessionId)     sessionStorage.setItem('ias_session_id', lastSessionId);
+  if (lastBlocks.length) sessionStorage.setItem('ias_blocks', JSON.stringify(lastBlocks));
+  sessionStorage.setItem('ias_theme', currentTheme);
+  sessionStorage.setItem('ias_mode',  currentMode);
+  sessionStorage.setItem('ias_designer_opened', '1');
+  // Auto-Design doesn't match any of the Designer's 14 named presets, so
+  // without this the Designer would silently open with its hardcoded
+  // defaults instead of the colors/fonts actually on screen. Reuse the same
+  // sessionStorage keys the "Import a Designed Doc" flow already uses —
+  // the Designer already knows how to load real properties/elements from them.
+  if (currentTheme === 'auto' && lastAutoDesignProps) {
+    sessionStorage.setItem('ias_import_props', JSON.stringify(lastAutoDesignProps));
+    if (lastAutoDesignElements) {
+      sessionStorage.setItem('ias_import_elements', JSON.stringify(lastAutoDesignElements));
+    }
+  }
+  window.open('/designer', '_blank');
+}
+window.applyDesignerTheme = function(css, props, theme) {
+  window._customDesignerCSS   = css;
+  window._customDesignerProps = props || {};
+  window._customDesignerTheme = theme || 'custom:';
+  showToast('Designer theme applied — re-rendering…');
+  const pill = document.getElementById('detect-pill');
+  if (pill) { pill.textContent = 'Custom designer theme'; pill.classList.add('detected'); }
+  if (lastHTML) rerender();
+};
+(function checkDesignerReturn() {
+  const designerWasOpened = sessionStorage.getItem('ias_designer_opened');
+  const appliedCSS        = sessionStorage.getItem('ias_applied_css');
+  if (!designerWasOpened && !appliedCSS) return;
+
+  const savedHTML    = sessionStorage.getItem('ias_last_html');
+  const savedSession = sessionStorage.getItem('ias_session_id');
+  const savedBlocks  = sessionStorage.getItem('ias_blocks');
+  const savedContent = sessionStorage.getItem('ias_content');
+  const savedTheme   = sessionStorage.getItem('ias_theme');
+  const savedMode    = sessionStorage.getItem('ias_mode');
+
+  // Clear ALL keys immediately so future page loads are not affected
+  ['ias_designer_opened','ias_last_html','ias_session_id','ias_blocks',
+   'ias_content','ias_theme','ias_mode',
+   'ias_applied_css','ias_applied_elements','ias_applied_props'
+  ].forEach(k => sessionStorage.removeItem(k));
+
+  if (savedHTML) {
+    lastHTML = savedHTML;
+    if (savedSession) lastSessionId = savedSession;
+    if (savedContent) {
+      lastContent = savedContent;
+      document.getElementById('content-input').value = savedContent;
+    }
+    if (savedBlocks) { try { lastBlocks = JSON.parse(savedBlocks); } catch(e){} }
+    if (savedTheme) {
+      currentTheme = savedTheme;
+      const tb = document.querySelector(`.theme-btn[data-t="${savedTheme}"]`);
+      if (tb) { document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active')); tb.classList.add('active'); }
+      document.getElementById('chip-theme').textContent = THEME_LABELS[savedTheme] || savedTheme;
+    }
+    if (savedMode) {
+      currentMode = savedMode;
+      const mb = document.querySelector(`.mode-btn[data-m="${savedMode}"]`);
+      if (mb) { document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); mb.classList.add('active'); }
+      document.getElementById('chip-mode').textContent = MODE_LABELS[savedMode] || savedMode;
+    }
+    renderIframe(lastHTML);
+    showOutput();
+  }
+
+  if (!appliedCSS) return;
+  window._customDesignerCSS   = appliedCSS;
+  window._customDesignerTheme = sessionStorage.getItem('ias_applied_theme') || 'custom:';
+  sessionStorage.removeItem('ias_applied_theme');
+  const pill = document.getElementById('detect-pill');
+  if (pill) { pill.textContent = 'Custom designer theme'; pill.classList.add('detected'); }
+  showToast('Applying designer theme…');
+  rerender();
+})();
+
+// ── Sample content ────────────────────────────────────────────────────────────
+function loadSample() {
+  document.getElementById('content-input').value = `# The Ashveil Chronicles — Story Bible\n\n## Characters\n\n### Eleanor Voss\nPrincess of Valmont. Age 24. Secretly trained in forbidden arts.\n**Critical**: She is the last heir to the Ash Throne.\nRelationship: Mentor to Soren. Enemy of Duke Halvard.\n\n### Duke Halvard\nAntagonist. Controls the eastern trade routes.\nWarning: He has a spy within the palace guard.\n\n## World Rules\n- Magic is forbidden under the Edict of Silence\n- The Treaty of Ash expires in Year 400 — critical to the plot\n- Iron nullifies magical ability on contact\n\n## Timeline\n- Year 312: War of Silence ends. Magic sealed.\n- Year 401: Present day. Treaty expiry imminent.\n- Year 405: Predicted collapse of the Valmont Dominion\n\n## The Iron Palace\nSeat of Valmont power. Built on a ley line suppressor.\n> "Power is not given. It is taken, or inherited. I inherited nothing." — Eleanor Voss`;
+  const pill = document.getElementById('detect-pill');
+  pill.textContent = 'Story Bible detected'; pill.classList.add('detected');
+  const codexBtn = document.querySelector('.theme-btn[data-t="codex"]');
+  if (codexBtn) setTheme(codexBtn);
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.getElementById('chip-mode').textContent  = 'Document';
+document.getElementById('chip-theme').textContent = 'Academic';
+loadThemes();
+document.getElementById('content-input').addEventListener('input', function() {
+  if (!this.value.trim()) {
+    document.getElementById('detect-pill').textContent = 'Auto-detect';
+    document.getElementById('detect-pill').classList.remove('detected');
+    document.getElementById('mode-chip').style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
